@@ -1,11 +1,14 @@
 import SwiftUI
 
-struct ContentView: View {
+struct RootTabView: View {
 
     var body: some View {
         TabView {
             NavigationStack {
                 PokemonListView()
+                    .navigationDestination(for: String.self) { name in
+                        PokemonDetailView(pokemonName: name)
+                    }
             }
             .tabItem {
                 Label("Pokédex", systemImage: "square.grid.2x2.fill")
@@ -13,6 +16,9 @@ struct ContentView: View {
 
             NavigationStack {
                 FavoritesView()
+                    .navigationDestination(for: String.self) { name in
+                        PokemonDetailView(pokemonName: name)
+                    }
             }
             .tabItem {
                 Label("Favourites", systemImage: "heart.fill")
