@@ -12,20 +12,8 @@ struct FavoriteRowView: View {
 
     var body: some View {
         HStack(spacing: 14) {
-            AsyncImage(url: URL(string: pokemon.imageUrl)) { phase in
-                switch phase {
-                case .success(let image):
-                    image.resizable().scaledToFit()
-
-                case .failure:
-                    Image(systemName: "photo")
-                        .foregroundStyle(.secondary)
-
-                default:
-                    ProgressView()
-                }
-            }
-            .frame(width: 56, height: 56)
+            PokemonImageView(url: pokemon.imageUrl)
+                .frame(width: 56, height: 56)
             .background(Color(.systemGray6))
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
 

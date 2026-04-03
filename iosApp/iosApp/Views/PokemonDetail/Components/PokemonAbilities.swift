@@ -9,14 +9,18 @@ import shared
 struct PokemonAbilitiesSection: View {
     let detail: PokemonDetail
     let store: PokemonDetailStore
-
+    
+    private let columns = [
+        GridItem(.adaptive(minimum: 100), spacing: 8)
+    ]
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Abilities")
                 .font(.headline)
                 .padding(.horizontal)
-
-            FlowLayout(spacing: 8) {
+            
+            LazyVGrid(columns: columns, alignment: .leading, spacing: 8) {
                 ForEach(detail.abilities, id: \.self) { ability in
                     Text(store.formattedAbility(ability))
                         .font(.subheadline)

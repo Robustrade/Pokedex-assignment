@@ -19,7 +19,7 @@ struct PokemonGridView: View {
         if pokemonList.isEmpty {
             PokemonEmptyStateView()
         } else {
-            ScrollView {
+            ScrollView(showsIndicators: false){
                 LazyVGrid(columns: columns, spacing: 12) {
                     ForEach(Array(pokemonList.enumerated()), id: \.element.id) { index, pokemon in
                         NavigationLink(value: pokemon.name) {

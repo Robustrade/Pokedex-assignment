@@ -24,7 +24,7 @@ struct FavoritesView: View {
                 FavoritesEmptyStateView()
             } else {
                 ScrollView {
-                    VStack(spacing: 8) {
+                    LazyVStack(spacing: 8) {
                         ForEach(store.favorites, id: \.id) { pokemon in
                             NavigationLink(value: pokemon.name) {
                                 FavoriteRowView(pokemon: pokemon)
