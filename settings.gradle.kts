@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "PokemonKMP"
 include(":shared")
+include(":iosInterop")
