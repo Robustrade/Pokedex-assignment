@@ -1,0 +1,21 @@
+use_frameworks! :linkage => :static
+platform :ios, '16.0'
+
+target 'iosApp' do
+  pod 'shared', :path => '../shared'
+  pod 'KMPNativeCoroutinesCore', '~> 1.0'
+  pod 'KMPNativeCoroutinesAsync', '~> 1.0'
+
+  target 'iosAppTests' do
+    # Link Kotlin only via the host app to avoid a second Kotlin runtime in the .xctest bundle.
+    inherit! :search_paths
+  end
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['SWIFT_VERSION'] = '5.0'
+    end
+  end
+end
