@@ -2,6 +2,7 @@ Pod::Spec.new do |spec|
     spec.name                     = 'shared'
     spec.version                  = '1.0.0'
     spec.homepage                 = ''
+    spec.homepage                 = 'https://example.com'
     spec.source                   = { :path => '.' }
     spec.authors                  = ''
     spec.summary                  = 'PokemonKMP Shared Module'
