@@ -16,6 +16,15 @@ post_install do |installer|
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
       config.build_settings['SWIFT_VERSION'] = '5.0'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
+    end
+
+    # Silence Xcode warning: script has no outputs / dependency analysis. Equivalent to
+    # "Based on dependency analysis" unchecked for this phase (Xcode 14+).
+    next unless target.name == 'shared'
+    target.build_phases.each do |phase|
+      next unless phase.respond_to?(:name) && phase.name == '[CP-User] Build shared'
+      phase.always_out_of_date = true if phase.respond_to?(:always_out_of_date=)
     end
   end
 end
