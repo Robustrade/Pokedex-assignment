@@ -6,8 +6,11 @@
 //
 
 import SwiftUI
+import shared
 
 struct ContentView: View {
+    @StateObject private var store = ContentView.makeStore()
+
     var body: some View {
         VStack {
             Image(systemName: "globe")
@@ -16,6 +19,14 @@ struct ContentView: View {
             Text("Hello, world!")
         }
         .padding()
+    }
+
+    private static func makeStore() -> PokemonListStore {
+        let koin = SharedKoin_coreKoinApplication.shared.koin
+        guard let repository = koin.get() as? PokemonRepository else {
+            fatalError("Unable to resolve PokemonRepository from Koin")
+        }
+        return PokemonListStore(repository: repository)
     }
 }
 
