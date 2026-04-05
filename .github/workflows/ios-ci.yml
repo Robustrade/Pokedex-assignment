@@ -48,6 +48,8 @@ jobs:
       - name: Install CocoaPods dependencies
         working-directory: iosApp
         run: pod install
+      - name: Link gradlew into iosApp for Pods "Build shared" script
+        run: ln -sf "$(pwd)/gradlew" iosApp/gradlew
 
       - name: Build iOS app (simulator)
         working-directory: iosApp
@@ -62,8 +64,6 @@ jobs:
             CODE_SIGN_IDENTITY="-" \
             CODE_SIGNING_REQUIRED=NO
 
-      # `xcodebuild test` cannot use generic/iOS Simulator — it resolves to "Any iOS Simulator
-      # Device" and fails: "Tests must be run on a concrete device". Pick a real UDID.
       - name: Run tests
         working-directory: iosApp
         run: |
