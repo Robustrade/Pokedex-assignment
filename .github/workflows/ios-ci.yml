@@ -52,13 +52,15 @@ jobs:
       - name: Build iOS app (simulator)
         working-directory: iosApp
         run: |
+          # Do not use `-parallelizeTargets NO` here: on some Xcode versions the trailing `NO`
+          # is parsed as a second build action and fails with: Unknown build action 'NO'.
           xcodebuild build \
             -workspace iosApp.xcworkspace \
             -scheme iosApp \
             -sdk iphonesimulator \
             -destination 'generic/platform=iOS Simulator' \
-            -parallelizeTargets NO \
-            CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
+            CODE_SIGN_IDENTITY="-" \
+            CODE_SIGNING_REQUIRED=NO
 
       - name: Run tests
         working-directory: iosApp
@@ -68,5 +70,5 @@ jobs:
             -scheme iosApp \
             -sdk iphonesimulator \
             -destination 'generic/platform=iOS Simulator' \
-            -parallelizeTargets NO \
-            CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
+            CODE_SIGN_IDENTITY="-" \
+            CODE_SIGNING_REQUIRED=NO
