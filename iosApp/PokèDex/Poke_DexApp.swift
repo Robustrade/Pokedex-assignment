@@ -6,9 +6,20 @@
 //
 
 import SwiftUI
+import shared
 
 @main
 struct Poke_DexApp: App {
+    init() {
+        ModulesKt.doInitKoin(
+            driverFactory: DatabaseDriverFactory(),
+            enableNetworkLogs: true,
+            appDeclaration: { _ in
+                
+            }
+        )
+    }
+    
     var body: some Scene {
         WindowGroup {
             ContentView()

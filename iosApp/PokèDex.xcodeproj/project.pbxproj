@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		854F0A1A2F823EE50013DB92 /* KMPNativeCoroutinesAsync in Frameworks */ = {isa = PBXBuildFile; productRef = 854F0A192F823EE50013DB92 /* KMPNativeCoroutinesAsync */; };
+		854F0A1C2F823EE50013DB92 /* KMPNativeCoroutinesCombine in Frameworks */ = {isa = PBXBuildFile; productRef = 854F0A1B2F823EE50013DB92 /* KMPNativeCoroutinesCombine */; };
+		854F0A1E2F823EE50013DB92 /* KMPNativeCoroutinesCore in Frameworks */ = {isa = PBXBuildFile; productRef = 854F0A1D2F823EE50013DB92 /* KMPNativeCoroutinesCore */; };
+		854F0A202F823EE50013DB92 /* KMPNativeCoroutinesRxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 854F0A1F2F823EE50013DB92 /* KMPNativeCoroutinesRxSwift */; };
 		858EC2622F818A06001DAC42 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 858EC2612F818A06001DAC42 /* libsqlite3.tbd */; };
 /* End PBXBuildFile section */
 
@@ -28,7 +32,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				854F0A1E2F823EE50013DB92 /* KMPNativeCoroutinesCore in Frameworks */,
+				854F0A1C2F823EE50013DB92 /* KMPNativeCoroutinesCombine in Frameworks */,
+				854F0A202F823EE50013DB92 /* KMPNativeCoroutinesRxSwift in Frameworks */,
 				858EC2622F818A06001DAC42 /* libsqlite3.tbd in Frameworks */,
+				854F0A1A2F823EE50013DB92 /* KMPNativeCoroutinesAsync in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -80,6 +88,10 @@
 			);
 			name = "PokèDex";
 			packageProductDependencies = (
+				854F0A192F823EE50013DB92 /* KMPNativeCoroutinesAsync */,
+				854F0A1B2F823EE50013DB92 /* KMPNativeCoroutinesCombine */,
+				854F0A1D2F823EE50013DB92 /* KMPNativeCoroutinesCore */,
+				854F0A1F2F823EE50013DB92 /* KMPNativeCoroutinesRxSwift */,
 			);
 			productName = "PokèDex";
 			productReference = 85421F752F8184730040FD28 /* PokèDex.app */;
@@ -109,6 +121,9 @@
 			);
 			mainGroup = 85421F6C2F8184730040FD28;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				854F0A182F823EE50013DB92 /* XCRemoteSwiftPackageReference "KMP-NativeCoroutines" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 85421F762F8184730040FD28 /* Products */;
 			projectDirPath = "";
@@ -198,6 +213,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -254,6 +270,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -267,6 +284,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/PokèDex/.xcframework/ios-arm64",
+					"$(PROJECT_DIR)/PokèDex/.xcframework/ios-arm64_x86_64-simulator",
+				);
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -299,6 +321,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/PokèDex/.xcframework/ios-arm64",
+					"$(PROJECT_DIR)/PokèDex/.xcframework/ios-arm64_x86_64-simulator",
+				);
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -345,6 +372,40 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		854F0A182F823EE50013DB92 /* XCRemoteSwiftPackageReference "KMP-NativeCoroutines" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/rickclephas/KMP-NativeCoroutines.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		854F0A192F823EE50013DB92 /* KMPNativeCoroutinesAsync */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 854F0A182F823EE50013DB92 /* XCRemoteSwiftPackageReference "KMP-NativeCoroutines" */;
+			productName = KMPNativeCoroutinesAsync;
+		};
+		854F0A1B2F823EE50013DB92 /* KMPNativeCoroutinesCombine */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 854F0A182F823EE50013DB92 /* XCRemoteSwiftPackageReference "KMP-NativeCoroutines" */;
+			productName = KMPNativeCoroutinesCombine;
+		};
+		854F0A1D2F823EE50013DB92 /* KMPNativeCoroutinesCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 854F0A182F823EE50013DB92 /* XCRemoteSwiftPackageReference "KMP-NativeCoroutines" */;
+			productName = KMPNativeCoroutinesCore;
+		};
+		854F0A1F2F823EE50013DB92 /* KMPNativeCoroutinesRxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 854F0A182F823EE50013DB92 /* XCRemoteSwiftPackageReference "KMP-NativeCoroutines" */;
+			productName = KMPNativeCoroutinesRxSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 85421F6D2F8184730040FD28 /* Project object */;
 }

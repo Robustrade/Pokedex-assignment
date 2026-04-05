@@ -6,6 +6,7 @@ sqldelight = "2.0.2"
 koin = "4.0.0"
 coroutines = "1.9.0"
 serialization = "1.7.3"
+ksp = "2.0.21-1.0.25"
 kmp-nativecoroutines = "1.0.0-ALPHA-37"
 
 [libraries]
@@ -38,4 +39,5 @@ kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref 
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kmp-nativecoroutines = { id = "com.rickclephas.kmp.nativecoroutines", version.ref = "kmp-nativecoroutines" }
