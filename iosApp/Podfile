@@ -1,0 +1,31 @@
+use_frameworks! :linkage => :static
+platform :ios, '16.0'
+
+target 'iosApp' do
+  pod 'shared', :path => '../shared'
+  pod 'KMPNativeCoroutinesCore', '~> 1.0'
+  pod 'KMPNativeCoroutinesAsync', '~> 1.0'
+
+  target 'iosAppTests' do
+    # Link Kotlin only via the host app to avoid a second Kotlin runtime in the .xctest bundle.
+    inherit! :search_paths
+  end
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['SWIFT_VERSION'] = '5.0'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
+    end
+
+    # Silence Xcode warning: script has no outputs / dependency analysis. Equivalent to
+    # "Based on dependency analysis" unchecked for this phase (Xcode 14+).
+    next unless target.name == 'shared'
+    target.build_phases.each do |phase|
+      next unless phase.respond_to?(:name) && phase.name == '[CP-User] Build shared'
+      # xcodeproj expects a String (e.g. "1"), not Ruby true — see AbstractBuildPhase#alwaysOutOfDate
+      phase.always_out_of_date = '1' if phase.respond_to?(:always_out_of_date=)
+    end
+  end
+end

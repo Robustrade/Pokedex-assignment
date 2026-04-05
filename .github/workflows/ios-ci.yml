@@ -1,0 +1,96 @@
+# iOS: Gradle (shared XCFramework) → CocoaPods → xcodebuild build + test (simulator).
+# See iosApp/README.md → "GitHub Actions CI" for setup and triggers.
+
+name: iOS CI
+
+on:
+  push:
+    branches: ['ios/**', main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ios-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build shared XCFramework
+        run: ./gradlew :shared:assembleSharedDebugXCFramework
+
+      - name: Install CocoaPods
+        run: sudo gem install cocoapods --no-document
+
+      - name: Install CocoaPods dependencies
+        working-directory: iosApp
+        run: pod install
+
+      - name: Link gradlew into iosApp (if script resolves REPO_ROOT to iosApp/)
+        run: ln -sf "$(pwd)/gradlew" iosApp/gradlew
+
+      # Apple Silicon runners: a generic destination can still compile some targets for x86_64
+      # simulator; the KMP `shared` module then fails to resolve. Force arm64-only simulator.
+      - name: Build iOS app (simulator)
+        working-directory: iosApp
+        env:
+          OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED: YES
+        run: |
+          xcodebuild build \
+            -workspace iosApp.xcworkspace \
+            -scheme iosApp \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            ARCHS=arm64 \
+            ONLY_ACTIVE_ARCH=YES \
+            'EXCLUDED_ARCHS[sdk=iphonesimulator*]'=x86_64 \
+            CODE_SIGN_IDENTITY="-" \
+            CODE_SIGNING_REQUIRED=NO
+
+      - name: Run tests
+        working-directory: iosApp
+        env:
+          OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED: YES
+        run: |
+          SIM_ID=$(xcodebuild -workspace iosApp.xcworkspace -scheme iosApp -showdestinations 2>/dev/null \
+            | grep 'platform:iOS Simulator' | grep 'name:iPhone' | grep -v placeholder | head -1 \
+            | sed -n 's/.*id:\([^,}]*\).*/\1/')
+          if [ -z "$SIM_ID" ]; then
+            SIM_ID=$(xcodebuild -workspace iosApp.xcworkspace -scheme iosApp -showdestinations 2>/dev/null \
+              | grep 'platform:iOS Simulator' | grep -v placeholder | head -1 \
+              | sed -n 's/.*id:\([^,}]*\).*/\1/')
+          fi
+          echo "Testing on simulator id=$SIM_ID"
+          xcodebuild test \
+            -workspace iosApp.xcworkspace \
+            -scheme iosApp \
+            -sdk iphonesimulator \
+            -destination "id=$SIM_ID" \
+            ARCHS=arm64 \
+            ONLY_ACTIVE_ARCH=YES \
+            'EXCLUDED_ARCHS[sdk=iphonesimulator*]'=x86_64 \
+            CODE_SIGN_IDENTITY="-" \
+            CODE_SIGNING_REQUIRED=NO

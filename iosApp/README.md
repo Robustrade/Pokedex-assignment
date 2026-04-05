@@ -1,279 +1,250 @@
-# iOS Assignment — PokéDex
+# iOS app — Pokédex (SwiftUI + Kotlin Multiplatform)
 
-## Repository
-
-**`https://github.com/Robustrade/Pokedex-assignment`**
+A **SwiftUI** client for the shared **Kotlin Multiplatform** (`shared`) module. The iOS target is intentionally thin: **networking, pagination, SQLite favorites, and ViewModels** live in Kotlin; SwiftUI observes that state through small bridges and presents list, detail, and favorites flows.
 
 ---
 
-## Getting Started
+## What you get
 
-### 1. Fork the repository
+|    Feature    |                                          Behavior                                                  |
+|---------------|----------------------------------------------------------------------------------------------------|
+|  **Pokédex**  |Paginated list (load more at scroll end), search by name, **list ↔ grid** layout toggle.            |
+|   **Detail**  |Full Pokémon info (types, stats, abilities, height/weight), **favorite** toggle persisted in SQLite.|
+| **Favorites** | Live list of favorited Pokémon from the local DB; tap through to the same detail screen.           |
 
-1. Open the repo link above and click **Fork** (top-right on GitHub).
-2. Clone **your fork** locally:
-   ```bash
-   git clone git@github.com:<your-username>/Pokedex-assignment.git
-   cd Pokedex-assignment
-   ```
-3. Create a feature branch — **do not commit directly to `main`**:
-   ```bash
-   git checkout -b ios/feature/<your-name>
-   ```
-
-### 2. Submit via Pull Request
-
-When you are done:
-1. Push your branch to your fork:
-   ```bash
-   git push origin ios/feature/<your-name>
-   ```
-2. Open a Pull Request from your fork's branch **→ `main`** on the original repo.
-3. Use this PR title format: `[iOS] <your-name> — PokéDex Assignment`
-4. In the PR description include:
-   - A short summary of your implementation decisions
-   - Screenshots or a screen recording of the app running
-   - Any known limitations or things you would improve given more time
-   - *(If AI was used)* the full list of prompts — see [AI Policy](#ai-policy) below
+Navigation: root **`TabView`** (Pokédex | Favorites), each tab wrapped in **`NavigationStack`**; detail is pushed via **`navigationDestination`** using the Pokémon **name** as the navigation value.
 
 ---
 
-## Your Task
+## Stack
 
-Build the iOS UI for the PokéDex app by integrating the `shared` KMP framework.
-**Do not modify anything inside `shared/`.** That module is provided as-is.
+| Layer | Technology |
+|--------------------|-----------------|
+| UI                 | SwiftUI |
+| Shared logic       | Kotlin Multiplatform module **`shared`** (compiled to **`shared.xcframework`** via CocoaPods) |
+| DI                 | **Koin** (initialized from Swift with `ModulesKt.doInitKoin`)                                 |
+| DB (iOS)           | **SQLDelight** native driver (wired in `shared` / `DatabaseDriverFactory`)                    |
+| Coroutines ↔ Swift | **KMPNativeCoroutines**(`KMPNativeCoroutinesCore`, `KMPNativeCoroutinesAsync`) — listed in                        `Podfile` for Flow/async interop                                                              |
+| Dependency manager | **CocoaPods** (`Podfile` + `shared/shared.podspec`)                                           |
 
-### Screens to build
-
-| Screen | ViewModel to use | Requirements |
-|--------|-----------------|--------------|
-| **Pokémon List** | `PokemonListViewModel` | Grid or list, search bar, infinite scroll / load-more |
-| **Pokémon Detail** | `PokemonDetailViewModel(name:repo:)` | Image, type chips, base-stat bars, height/weight, favourite toggle |
-| **Favourites** | `FavoritesViewModel` | Reactively updates when favourites change |
+**Minimum iOS:** **16.0** (`Podfile` and `shared/shared.podspec`). Use an Xcode whose **iOS deployment target** matches (avoid mixing a much higher project-only target with no need).
 
 ---
 
-## Integration Guide
+## Repository layout (iOS)
 
-### Step 1 — Integrate the shared framework
-
-**Option A — CocoaPods (recommended)**
-
-Create `iosApp/Podfile`:
-```ruby
-use_frameworks!
-platform :ios, '16.0'
-
-target 'iosApp' do
-  pod 'shared', :path => '../shared'
-end
 ```
+iosApp/
+├── Podfile                    # CocoaPods: local `shared` pod + KMP Native Coroutines
+├── iosApp.xcworkspace         # Open this after `pod install` (not the .xcodeproj alone)
+└── iosApp/                    # Swift sources (synced group in Xcode)
+    ├── iosApp.swift           # @main App: Koin init, TabView, repository wiring
+    ├── PokemonRepositoryResolver.swift
+    ├── StoreWrappers.swift
+    ├── KotlinBridge.swift
+    ├── PokemonListScreen.swift
+    ├── PokemonListCells.swift
+    ├── PokemonDetailScreen.swift
+    ├── PokemonDetailFormatting.swift
+    ├── PokemonTypePalette.swift
+    └── FavoritesScreen.swift
+```
+
+The **`iosApp`** folder is a **file-system synchronized** group in Xcode: new Swift files here are picked up by the app target automatically.
+
+---
+
+## End-to-end data flow
+
+```mermaid
+flowchart LR
+  subgraph kotlin [shared KMP]
+    VM[ViewModels]
+    Repo[PokemonRepository]
+    DB[(SQLDelight)]
+    VM --> Repo
+    Repo --> DB
+  end
+  subgraph swift [iOS]
+    Koin[ModulesKt.doInitKoin]
+    Resolver[PokemonRepositoryResolver]
+    Models[Screen models in StoreWrappers]
+    UI[SwiftUI screens]
+    Koin --> Resolver
+    Resolver --> Repo
+    Repo --> VM
+    VM --> Models
+    Models --> UI
+  end
+```
+
+1. **`iosApp.swift`** calls **`ModulesKt.doInitKoin(...)`** with a **`DatabaseDriverFactory()`** (from `shared`) and retains the **`KoinApplication`** via **`PokemonRepositoryResolver.retainKoinApplication`**.
+2. **`PokemonRepositoryResolver.pokemonRepository()`** resolves the Kotlin **`PokemonRepository`** from Koin (Swift-side lookup by type; avoids linking a second framework such as `iosInterop` alongside `shared`).
+3. **`StoreWrappers`** types own the Kotlin **ViewModels**, collect **`StateFlow`** / **`Flow`** into **`@Published`** properties, and call **`onCleared()`** on teardown.
+4. **Screens** take a **`PokemonRepository`** (or use a screen model that was created with it) and render UI; user actions call into the screen models / ViewModels.
+
+---
+
+## Component reference
+
+### App entry — `iosApp.swift`
+
+- Declares **`@main`** **`iOSApp`**.
+- **`init()`**: runs **`ModulesKt.doInitKoin`** with **`DatabaseDriverFactory()`**, **`enableNetworkLogs`**, and a callback that stores the Koin app in **`PokemonRepositoryResolver`**.
+- **`body`**: resolves **`PokemonRepository`** once, builds **`TabView`** with **Pokédex** and **Favorites** tabs, each with **`NavigationStack`** and the shared repository.
+
+### Dependency resolution — `PokemonRepositoryResolver.swift`
+
+- Holds a static reference to **`Koin_coreKoinApplication`** after init.
+- **`pokemonRepository()`** returns the Kotlin **`PokemonRepository`** protocol type exported from **`shared`**, resolved from Koin’s registry (by **`PokemonRepository`**’s qualified name).
+- **Note:** The repo also contains an **`iosInterop`** Gradle module with **`getPokemonRepository()`** for *single-framework* setups. The iOS app uses **only** the **`shared`** CocoaPod; do **not** link **`iosInterop`** and **`shared`** in the same app (duplicate Kotlin/Native symbols).
+
+### Kotlin ↔ SwiftUI state — `StoreWrappers.swift`
+
+|         Type          |                                        Role                                         |
+|-----------------------|-------------------------------------------------------------------------------------|
+| **PokemonListScreenModel**   | Wraps **PokemonListViewModel**: **state**, **searchText**, **isGrid**,                                            **loadNextPage**, **refresh**, **search**, **toggleGridLayout**,                                                  **loadMoreIfAtEnd**.                                                         |
+| **PokemonDetailScreenModel** | Wraps **PokemonDetailViewModel**: **state**, **retry**, **toggleFavorite**,                                       **navigationTitle**.                                                         |
+| **FavoritesScreenModel**     | Wraps **FavoritesViewModel**: **favorites** array from **Flow**.             |
+
+Each model uses **`FlowCollectorHelper`** (see below) to bridge Kotlin flows into Swift **`AsyncStream`** → **`@Published`** updates.
+
+### Helpers — `KotlinBridge.swift`
+
+| Symbol | Purpose |
+|--------|---------|
+| **`FlowCollectorHelper`** | Implements Kotlin’s **`FlowCollector`** so **`Flow.collect`** can drive Swift async code. |
+| **`PokemonList`** | Normalizes Kotlin/`NSArray` list payloads into **`[Pokemon]`** (used for favorites decoding). |
+| **`AppMotion`** | Shared **`Animation`** values (list/spring vs toggle/ease) for consistent motion. |
+
+### Screens & UI
+
+| File | Role |
+|------|------|
+| **`PokemonListScreen.swift`** | List / grid / loading / empty / error; search bar; toolbar layout toggle; navigation to detail. |
+| **`PokemonListCells.swift`** | **`PokemonGridCell`**, **`PokemonListCell`** — reusable row/grid cells. |
+| **`PokemonDetailScreen.swift`** | Detail scroll content, favorite button, stats, types, metrics. |
+| **`PokemonDetailFormatting.swift`** | Pure helpers: Kotlin list/stat bridging, stat labels, height/weight math, max stat for bars. |
+| **`PokemonTypePalette.swift`** | Type chip **colors** with light/dark **dynamic** `UIColor` (trait-aware). |
+| **`FavoritesScreen.swift`** | Empty state vs **`List`** of favorites; navigation to detail. |
+
+---
+
+## Shared Kotlin module (summary)
+
+Detailed API tables (ViewModels, models, **`initKoin`**) live in the **[root `README.md`](../README.md)**. The iOS app depends on the same **`PokemonRepository`**, **`PokemonListViewModel`**, **`PokemonDetailViewModel`**, and **`FavoritesViewModel`** described there.
+
+---
+
+## Requirements
+
+- **Xcode** (recent iOS SDK).
+- **[CocoaPods](https://cocoapods.org/)** — see `Podfile`.
+- **JDK 17** and **Gradle** at the **repository root** — used to build **`shared`** into an **XCFramework** consumed by the `shared` pod (`shared/shared.podspec` runs Gradle on `pod install` / build phases as configured).
+
+---
+
+## Build & run
+
+From the **repository root**:
+
+1. **(Optional)** Build the shared XCFramework explicitly:
+
+   ```bash
+   ./gradlew :shared:assembleSharedDebugXCFramework
+   ```
+
+   Release slice (if needed):
+
+   ```bash
+   ./gradlew :shared:assembleSharedReleaseXCFramework
+   ```
+
+2. **Install pods** and open the **workspace**:
+
+   ```bash
+   cd iosApp
+   pod install
+   open iosApp.xcworkspace
+   ```
+
+3. Select the **`iosApp`** scheme and run on a **simulator** or **device**.
+
+Always use **`iosApp.xcworkspace`** so Xcode sees the **`Pods`** project and the **`shared`** pod.
+
+---
+
+## Tests
+
+- **`iosAppTests`** — Swift unit tests (e.g. **`StoreWrappers`**, **`PokemonList`** bridging). The nested **`iosAppTests`** target uses **`inherit! :search_paths`** in the **`Podfile`** so the test bundle does **not** link a second Kotlin runtime (Kotlin comes only from the host app).
+- **`MockPokemonRepository.swift`** — test double implementing **`PokemonRepository`** where needed.
+
+**Xcode:** **⌘U** to test.
+
+**CLI** (replace simulator name as needed):
+
 ```bash
-pod install
-open iosApp.xcworkspace
-```
-The Gradle `syncFramework` task runs automatically before each Xcode build.
-
-**Option B — XCFramework (manual)**
-
-```bash
-# from repo root
-./gradlew :shared:assembleSharedXCFramework
-```
-Drag `shared/build/XCFrameworks/release/shared.xcframework` into your Xcode project target.
-
----
-
-### Step 2 — Initialise Koin
-
-In your `@main` App struct:
-```swift
-import shared
-
-@main
-struct iOSApp: App {
-    init() {
-        ModulesKt.doInitKoin(
-            driverFactory: DatabaseDriverFactory(),
-            enableNetworkLogs: true
-        )
-    }
-    var body: some Scene {
-        WindowGroup { ContentView() }
-    }
-}
+cd iosApp
+xcodebuild test -workspace iosApp.xcworkspace -scheme iosApp -sdk iphonesimulator \
+  -destination 'platform=iOS Simulator,name=iPhone 16'
 ```
 
 ---
 
-### Step 3 — Observe StateFlow from SwiftUI
+## GitHub Actions CI
 
-KMP `StateFlow` is not natively observable in SwiftUI. Create a thin `ObservableObject` wrapper:
+Workflow file: **[`.github/workflows/ios-ci.yml`](../.github/workflows/ios-ci.yml)**.
 
-```swift
-import shared
-import Combine
+It runs on **macOS**, builds the **`shared`** XCFramework with Gradle, installs CocoaPods dependencies, then **builds and tests** the **`iosApp`** scheme against the **iOS Simulator** (no code signing).
 
-@MainActor
-final class PokemonListStore: ObservableObject {
-    @Published private(set) var state: PokemonListState = PokemonListState.Loading()
+### One-time repository setup (GitHub)
 
-    private let viewModel: PokemonListViewModel
-    private var task: Task<Void, Never>?
+1. **Push the workflow file** — Commit `.github/workflows/ios-ci.yml` on your default branch (or merge a PR that adds it).
+2. **Enable Actions** — In the GitHub repo: **Settings → Actions → General** → allow **Actions** (read and write is optional; read-only is enough for this workflow).
+3. **Branch protection (optional)** — **Settings → Rules → Rulesets** (or branch protection): require the **“iOS CI”** check to pass before merging to `main`, if you want.
 
-    init(repository: PokemonRepository) {
-        viewModel = PokemonListViewModel(repository: repository)
-        task = Task { [weak self] in
-            // Collect the KMP StateFlow using an AsyncStream bridge
-            for await newState in viewModel.state.stream() {
-                self?.state = newState
-            }
-        }
-    }
+No **secrets** are required for this workflow (public clone, Gradle, CocoaPods, Xcode on the runner).
 
-    func loadNextPage() { viewModel.loadNextPage() }
-    func search(_ query: String) { viewModel.search(query: query) }
+### What triggers CI
 
-    deinit {
-        task?.cancel()
-        viewModel.onCleared()
-    }
-}
-```
+| Event | When it runs (see the workflow file for exact `on:`) |
+|--------|------------------------------------------------------|
+| **Push** | To **`ios/**`** or **`main`**. |
+| **Pull request** | Targeting **`main`**. |
+| **workflow_dispatch** | Manual run: **Actions** tab → **iOS CI** → **Run workflow**. |
 
-> **Tip:** Consider adding [KMPNativeCoroutines](https://github.com/rickclephas/KMP-NativeCoroutines)
-> to get first-class `async/await` + `AsyncStream` wrappers for all KMP Flows with zero boilerplate.
+To run CI on **every push** or **all PRs**, edit **`on:`** in `.github/workflows/ios-ci.yml` (for example add `main` to `push.branches` or widen `pull_request`).
+
+### What the job does
+
+1. **Checkout** the repo.
+2. **JDK 17** (Temurin) for Gradle.
+3. **`./gradlew :shared:assembleSharedDebugXCFramework`** — produces the framework the **`shared`** pod expects.
+4. **`pod install`** in **`iosApp/`** — generates **`Pods/`** and **`iosApp.xcworkspace`**.
+5. **`xcodebuild build`** — simulator build, signing disabled for CI.
+6. **`xcodebuild test`** — unit tests (**`iosAppTests`**).
+
+### If CI fails on GitHub but works locally
+
+- **`pod: command not found`** — The workflow should install CocoaPods; if you fork an older workflow, add an **Install CocoaPods** step (`gem` or `brew`).
+- **`Permission denied` on `./gradlew`** — Ensure **`gradlew`** is committed as executable (`chmod +x gradlew` and commit).
+- **Simulator / Xcode mismatch** — Runners ship a current Xcode; `-destination 'generic/platform=iOS Simulator'` avoids naming a specific device. For a fixed OS version, set **`DEVELOPER_DIR`** or use **`xcode-select`** in the workflow.
+- **Branch filter** — If CI does not run on your branch, add it under **`on.push.branches`** in the workflow.
 
 ---
 
-## Evaluation Criteria
+## Troubleshooting
 
-### Functional (60 pts)
-
-| Area | Points |
-|------|--------|
-| Pokémon list with pagination | 15 |
-| Search (live filtering) | 10 |
-| Detail screen — all fields shown | 15 |
-| Favourite toggle persists across app restarts | 10 |
-| Favourites screen updates reactively | 10 |
-
-### Code Quality (25 pts)
-
-| Area | Points |
-|------|--------|
-| Clean SwiftUI patterns (no logic in Views) | 10 |
-| Proper memory management (no retain cycles, StateFlow collected safely) | 8 |
-| Consistent code style & naming | 7 |
-
-### Git Discipline (15 pts)
-
-| Area | Points |
-|------|--------|
-| Meaningful, atomic commit messages | 8 |
-| Logical commit history (no "fix", "wip", "asdf" commits) | 4 |
-| Clean PR description with screenshots | 3 |
-
-### Bonus
-
-| Bonus | Extra Points |
+| Issue | What to try |
 |-------|-------------|
-| GitHub Actions CI (build + lint on every push) | +5 |
-| Unit tests for the SwiftUI store/wrapper layer | +3 |
-| Smooth animations (list transitions, type colour theming) | +2 |
-| Dark mode support | +2 |
+| **Pods / `shared` not found** | Run **`pod install`** from **`iosApp/`**; open **`.xcworkspace`**. |
+| **Gradle / framework out of date** | From repo root: **`./gradlew :shared:assembleSharedDebugXCFramework`**, then clean build in Xcode. |
+| **Duplicate Kotlin symbols** | Do not add **`iosInterop`** as another pod while using **`shared`**. |
+| **Tests crash with Kotlin** | Ensure test targets use **`inherit! :search_paths`** pattern for Kotlin, as in this **`Podfile`**. |
 
 ---
 
-## GitHub Actions CI (Bonus)
+## Related docs
 
-Set up a workflow at `.github/workflows/ios.yml` that triggers on every push to your branch:
-
-```yaml
-name: iOS CI
-
-on:
-  push:
-    branches: [ "ios/**" ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  build:
-    runs-on: macos-15
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Build shared XCFramework
-        run: ./gradlew :shared:assembleSharedXCFramework
-
-      - name: Install CocoaPods dependencies
-        working-directory: iosApp
-        run: pod install
-
-      - name: Build iOS app (simulator)
-        working-directory: iosApp
-        run: |
-          xcodebuild build \
-            -workspace iosApp.xcworkspace \
-            -scheme iosApp \
-            -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 16' \
-            CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
-
-      - name: Run tests
-        working-directory: iosApp
-        run: |
-          xcodebuild test \
-            -workspace iosApp.xcworkspace \
-            -scheme iosApp \
-            -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 16'
-```
-
----
-
-## AI Policy
-
-You **may** use AI assistants (ChatGPT, Claude, Copilot, Cursor, etc.) to help complete this assignment.
-
-**However, the following is mandatory if AI was used:**
-
-1. Include a file `AI_PROMPTS.md` at the root of your `iosApp/` folder.
-2. Log **every prompt** you sent to the AI in that file — copy-paste them in order.
-3. Briefly note next to each prompt what you accepted, what you changed, and why.
-
-**Example format:**
-```markdown
-## AI Prompts Log
-
-### Prompt 1
-> "How do I observe a KMP StateFlow in SwiftUI without KMPNativeCoroutines?"
-
-**Used:** Yes, adapted the AsyncStream bridge pattern from the response.
-**Changed:** Replaced the global actor usage with @MainActor on the class instead.
-
-### Prompt 2
-> "Write a SwiftUI grid view that shows a list of Pokemon with their image and name"
-
-**Used:** Partially. Used the LazyVGrid structure, rewrote the cell to match the design spec.
-```
-
-Commit messages, code organisation, and the depth of understanding shown in your modifications to AI output will all be factored into the final score.
-
----
-
-## Suggested Tech Stack
-
-- **UI:** SwiftUI
-- **Navigation:** `NavigationStack`
-- **Images:** `AsyncImage` (built-in) or [Kingfisher](https://github.com/onevcat/Kingfisher)
-- **KMP bridge:** Manual `ObservableObject` wrapper, or [KMPNativeCoroutines](https://github.com/rickclephas/KMP-NativeCoroutines)
-- **Minimum deployment target:** iOS 16.0
+- **[`../README.md`](../README.md)** — monorepo overview, **`shared`** ViewModels and models, Gradle commands.
+- **[`../androidApp/README.md`](../androidApp/README.md)** — Android app (parallel consumer of **`shared`**).
