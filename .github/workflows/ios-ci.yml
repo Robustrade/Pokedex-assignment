@@ -62,13 +62,24 @@ jobs:
             CODE_SIGN_IDENTITY="-" \
             CODE_SIGNING_REQUIRED=NO
 
+      # `xcodebuild test` cannot use generic/iOS Simulator — it resolves to "Any iOS Simulator
+      # Device" and fails: "Tests must be run on a concrete device". Pick a real UDID.
       - name: Run tests
         working-directory: iosApp
         run: |
+          SIM_ID=$(xcodebuild -workspace iosApp.xcworkspace -scheme iosApp -showdestinations 2>/dev/null \
+            | grep 'platform:iOS Simulator' | grep 'name:iPhone' | grep -v placeholder | head -1 \
+            | sed -n 's/.*id:\([^,}]*\).*/\1/')
+          if [ -z "$SIM_ID" ]; then
+            SIM_ID=$(xcodebuild -workspace iosApp.xcworkspace -scheme iosApp -showdestinations 2>/dev/null \
+              | grep 'platform:iOS Simulator' | grep -v placeholder | head -1 \
+              | sed -n 's/.*id:\([^,}]*\).*/\1/')
+          fi
+          echo "Testing on simulator id=$SIM_ID"
           xcodebuild test \
             -workspace iosApp.xcworkspace \
             -scheme iosApp \
             -sdk iphonesimulator \
-            -destination 'generic/platform=iOS Simulator' \
+            -destination "id=$SIM_ID" \
             CODE_SIGN_IDENTITY="-" \
             CODE_SIGNING_REQUIRED=NO

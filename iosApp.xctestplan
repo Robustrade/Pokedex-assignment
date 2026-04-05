@@ -24,14 +24,6 @@
         "identifier" : "49C9D86A2F7EE5F800F00238",
         "name" : "iosAppTests"
       }
-    },
-    {
-      "parallelizable" : true,
-      "target" : {
-        "containerPath" : "container:iosApp.xcodeproj",
-        "identifier" : "49C9D8742F7EE5F900F00238",
-        "name" : "iosAppUITests"
-      }
     }
   ],
   "version" : 1
