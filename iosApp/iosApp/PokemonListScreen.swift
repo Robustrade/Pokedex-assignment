@@ -42,7 +42,7 @@ struct PokemonListScreen: View {
                 ),
                 prompt: "Search Pokémon"
             )
-            .onChange(of: model.searchText) { _, query in
+            .onChange(of: model.searchText) { query in
                 withAnimation(AppMotion.list) {
                     model.search(query)
                 }
