@@ -20,7 +20,7 @@ struct Poke_DexApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
         }
     }
 }

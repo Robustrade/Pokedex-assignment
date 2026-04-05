@@ -5,10 +5,12 @@
 //  Created by Dharamrajsinh Jadeja on 04/04/26.
 //
 
-import shared
+import Foundation
 import Combine
+import shared
 import KMPNativeCoroutinesAsync
 
+/// ViewModel for Pokemon List feature. Bridges KMP ViewModel with SwiftUI
 @MainActor
 final class PokemonListStore: ObservableObject {
     @Published private(set) var state: PokemonListState = PokemonListState.Loading()
@@ -17,7 +19,7 @@ final class PokemonListStore: ObservableObject {
     private var task: Task<Void, Never>?
     
     init(repository: PokemonRepository) {
-        viewModel = PokemonListViewModel(repository: repository)
+        self.viewModel = PokemonListViewModel(repository: repository)
         
         task = Task { [weak self] in
             guard let self else { return }
