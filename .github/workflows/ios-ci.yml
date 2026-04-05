@@ -52,6 +52,8 @@ jobs:
       - name: Link gradlew into iosApp (if script resolves REPO_ROOT to iosApp/)
         run: ln -sf "$(pwd)/gradlew" iosApp/gradlew
 
+      # Apple Silicon runners: a generic destination can still compile some targets for x86_64
+      # simulator; the KMP `shared` module then fails to resolve. Force arm64-only simulator.
       - name: Build iOS app (simulator)
         working-directory: iosApp
         env:
@@ -62,6 +64,9 @@ jobs:
             -scheme iosApp \
             -sdk iphonesimulator \
             -destination 'generic/platform=iOS Simulator' \
+            ARCHS=arm64 \
+            ONLY_ACTIVE_ARCH=YES \
+            'EXCLUDED_ARCHS[sdk=iphonesimulator*]'=x86_64 \
             CODE_SIGN_IDENTITY="-" \
             CODE_SIGNING_REQUIRED=NO
 
@@ -84,5 +89,8 @@ jobs:
             -scheme iosApp \
             -sdk iphonesimulator \
             -destination "id=$SIM_ID" \
+            ARCHS=arm64 \
+            ONLY_ACTIVE_ARCH=YES \
+            'EXCLUDED_ARCHS[sdk=iphonesimulator*]'=x86_64 \
             CODE_SIGN_IDENTITY="-" \
             CODE_SIGNING_REQUIRED=NO
