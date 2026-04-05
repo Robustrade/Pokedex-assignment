@@ -7,36 +7,33 @@
 
 import SwiftUI
 import shared
+import Kingfisher
 
-/// Individual Pokemon card component for grid display
 struct PokemonGridCard: View {
     let pokemon: Pokemon
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            // Image
-            AsyncImage(url: URL(string: pokemon.imageUrl)) { image in
-                image
-                    .resizable()
-                    .scaledToFit()
-            } placeholder: {
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.gray.opacity(0.2))
-                    .overlay {
-                        ProgressView()
-                    }
-            }
-            .frame(height: 120)
-            .frame(maxWidth: .infinity)
-            .background(Color.gray.opacity(0.1))
-            .cornerRadius(8)
-            
-            // Name
+
+            KFImage(URL(string: pokemon.imageUrl))
+                .resizable()
+                .placeholder {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.gray.opacity(0.2))
+                        .overlay { ProgressView() }
+                }
+                .fade(duration: 0.2)
+                .cacheOriginalImage()
+                .scaledToFit()
+                .frame(height: 120)
+                .frame(maxWidth: .infinity)
+                .background(Color.gray.opacity(0.1))
+                .cornerRadius(8)
+
             Text(pokemon.name.capitalized)
                 .font(.headline)
                 .lineLimit(1)
-            
-            // ID
+
             Text("#\(String(format: "%04d", pokemon.id))")
                 .font(.caption)
                 .foregroundStyle(.secondary)

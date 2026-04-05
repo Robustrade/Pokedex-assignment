@@ -7,6 +7,7 @@
 
 import SwiftUI
 import shared
+import Kingfisher
 
 @main
 struct Poke_DexApp: App {
@@ -16,6 +17,11 @@ struct Poke_DexApp: App {
             driverFactory: DatabaseDriverFactory(),
             enableNetworkLogs: true
         ) { _ in }
+        // Kingfisher cache config
+        let cache = ImageCache.default
+        cache.memoryStorage.config.totalCostLimit = 100 * 1024 * 1024  // 100 MB RAM
+        cache.diskStorage.config.sizeLimit = 500 * 1024 * 1024         // 500 MB disk
+        cache.diskStorage.config.expiration = .days(7)
     }
     
     var body: some Scene {

@@ -14,6 +14,7 @@ struct RootView: View {
     @State private var repository: PokemonRepository?
     @State private var isLoading = true
     @State private var errorMessage: String?
+    @State private var favoritesStore: FavoritesStore?
     
     var body: some View {
         Group {
@@ -27,22 +28,29 @@ struct RootView: View {
                             Label("List", systemImage: "list.bullet")
                         }
                         .tag(0)
+                    
+                    // Favorites Tab
+                    FavoritesView(
+                        repository: repo,
+                    )
+                    .tabItem {
+                        Label("Favorites", systemImage: "heart.fill")
+                    }
+                    .tag(1)
                 }
             } else {
                 FailedInitializationView(
                     errorMessage: errorMessage,
-                    onRetry: retryInitialization
+                    onRetry: initialize
                 )
             }
         }
         .task {
-            // Wait for Koin to initialize and repository to be set
-            try? await Task.sleep(nanoseconds: 500_000_000) // 0.5s
-            retryInitialization()
+            initialize()
         }
     }
     
-    private func retryInitialization() {
+    private func initialize() {
         do {
             repository = try ModulesKt.getRepository()
             errorMessage = nil
@@ -55,7 +63,6 @@ struct RootView: View {
 }
 
 // MARK: - Subviews
-
 private struct InitializingView: View {
     var body: some View {
         VStack(spacing: 16) {
@@ -94,8 +101,4 @@ private struct FailedInitializationView: View {
         }
         .padding()
     }
-}
-
-#Preview {
-    RootView()
 }
