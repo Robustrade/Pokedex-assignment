@@ -24,7 +24,8 @@ post_install do |installer|
     next unless target.name == 'shared'
     target.build_phases.each do |phase|
       next unless phase.respond_to?(:name) && phase.name == '[CP-User] Build shared'
-      phase.always_out_of_date = true if phase.respond_to?(:always_out_of_date=)
+      # xcodeproj expects a String (e.g. "1"), not Ruby true — see AbstractBuildPhase#alwaysOutOfDate
+      phase.always_out_of_date = '1' if phase.respond_to?(:always_out_of_date=)
     end
   end
 end
