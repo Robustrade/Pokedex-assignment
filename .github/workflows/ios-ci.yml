@@ -48,14 +48,15 @@ jobs:
       - name: Install CocoaPods dependencies
         working-directory: iosApp
         run: pod install
-      - name: Link gradlew into iosApp for Pods "Build shared" script
+
+      - name: Link gradlew into iosApp (if script resolves REPO_ROOT to iosApp/)
         run: ln -sf "$(pwd)/gradlew" iosApp/gradlew
 
       - name: Build iOS app (simulator)
         working-directory: iosApp
+        env:
+          OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED: YES
         run: |
-          # Do not use `-parallelizeTargets NO` here: on some Xcode versions the trailing `NO`
-          # is parsed as a second build action and fails with: Unknown build action 'NO'.
           xcodebuild build \
             -workspace iosApp.xcworkspace \
             -scheme iosApp \
@@ -66,6 +67,8 @@ jobs:
 
       - name: Run tests
         working-directory: iosApp
+        env:
+          OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED: YES
         run: |
           SIM_ID=$(xcodebuild -workspace iosApp.xcworkspace -scheme iosApp -showdestinations 2>/dev/null \
             | grep 'platform:iOS Simulator' | grep 'name:iPhone' | grep -v placeholder | head -1 \
