@@ -9,10 +9,17 @@ SwiftUI client for the repo’s **shared** Kotlin Multiplatform module: **API ca
 
 ## Contents
 
-| Jump to | Jump to |
-|:--------|:--------|
-| [Features](#what-you-get) · [Stack](#stack) · [Prerequisites and quick start](#prerequisites-and-quick-start) | [Layout](#repository-layout-ios) · [Architecture](#architecture) · [Components](#component-reference) |
-| [Shared API summary](#shared-kotlin-module-summary) · [Build & run](#build--run) · [Tests](#tests) | [GitHub Actions CI](#github-actions-ci) · [Troubleshooting](#troubleshooting) |
+- [What you get](#what-you-get)
+- [Stack](#stack)
+- [Prerequisites and quick start](#prerequisites-and-quick-start)
+- [Repository layout](#repository-layout-ios)
+- [Architecture](#architecture)
+- [Component reference](#component-reference)
+- [Shared Kotlin module (summary)](#shared-kotlin-module-summary)
+- [Build & run](#build--run)
+- [Tests](#tests)
+- [GitHub Actions CI](#github-actions-ci)
+- [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -142,7 +149,7 @@ flowchart LR
 | Type                         | Role                                                                                              |
 |------------------------------|---------------------------------------------------------------------------------------------------|
 | **PokemonListScreenModel**   | **PokemonListViewModel**: state, search, grid flag, load/refresh/search, **loadMoreIfAtEnd**.     |
-| **PokemonDetailScreenModel** | **PokemonDetailViewModel**: state, **`retry**, **toggleFavorite**, title.                         |
+| **PokemonDetailScreenModel** | **PokemonDetailViewModel**: state, **retry**, **toggleFavorite**, title.                          |
 | **FavoritesScreenModel**     | **FavoritesViewModel**: **favorites** from **Flow**.                                              |
 
 Uses **FlowCollectorHelper** → **AsyncStream** → **@Published**.
@@ -207,7 +214,7 @@ Use **iosApp.xcworkspace** so Xcode sees **Pods** and **shared**.
 ## Tests
 
 - **iosAppTests**: Swift unit tests (e.g. **StoreWrappers**, **PokemonList**). Test target uses **inherit! :search_paths** in **Podfile** so tests don’t link a second Kotlin runtime.
-- **MockPokemonRepository.swift**: Test double for **PokemonRepository**.                                                                                                                                       |
+- **MockPokemonRepository.swift**: Test double for **PokemonRepository**.
 
 ---
 
