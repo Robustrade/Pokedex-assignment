@@ -15,15 +15,31 @@
 		85F24F7C2F82AB5D00D2376B /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 85F24F7B2F82AB5D00D2376B /* Kingfisher */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		85F24FE32F83E6F600D2376B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 85421F6D2F8184730040FD28 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 85421F742F8184730040FD28;
+			remoteInfo = "PokèDex";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		85421F752F8184730040FD28 /* PokèDex.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "PokèDex.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		858EC2612F818A06001DAC42 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
+		85F24FDF2F83E6F600D2376B /* PokèDexTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "PokèDexTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		85421F772F8184730040FD28 /* PokèDex */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "PokèDex";
+			sourceTree = "<group>";
+		};
+		85F24FE02F83E6F600D2376B /* PokèDexTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "PokèDexTests";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -42,6 +58,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		85F24FDC2F83E6F600D2376B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -49,6 +72,7 @@
 			isa = PBXGroup;
 			children = (
 				85421F772F8184730040FD28 /* PokèDex */,
+				85F24FE02F83E6F600D2376B /* PokèDexTests */,
 				858EC2602F818A06001DAC42 /* Frameworks */,
 				85421F762F8184730040FD28 /* Products */,
 			);
@@ -58,6 +82,7 @@
 			isa = PBXGroup;
 			children = (
 				85421F752F8184730040FD28 /* PokèDex.app */,
+				85F24FDF2F83E6F600D2376B /* PokèDexTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -100,6 +125,29 @@
 			productReference = 85421F752F8184730040FD28 /* PokèDex.app */;
 			productType = "com.apple.product-type.application";
 		};
+		85F24FDE2F83E6F600D2376B /* PokèDexTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 85F24FE52F83E6F600D2376B /* Build configuration list for PBXNativeTarget "PokèDexTests" */;
+			buildPhases = (
+				85F24FDB2F83E6F600D2376B /* Sources */,
+				85F24FDC2F83E6F600D2376B /* Frameworks */,
+				85F24FDD2F83E6F600D2376B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				85F24FE42F83E6F600D2376B /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				85F24FE02F83E6F600D2376B /* PokèDexTests */,
+			);
+			name = "PokèDexTests";
+			packageProductDependencies = (
+			);
+			productName = "PokèDexTests";
+			productReference = 85F24FDF2F83E6F600D2376B /* PokèDexTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -112,6 +160,10 @@
 				TargetAttributes = {
 					85421F742F8184730040FD28 = {
 						CreatedOnToolsVersion = 26.3;
+					};
+					85F24FDE2F83E6F600D2376B = {
+						CreatedOnToolsVersion = 26.3;
+						TestTargetID = 85421F742F8184730040FD28;
 					};
 				};
 			};
@@ -134,12 +186,20 @@
 			projectRoot = "";
 			targets = (
 				85421F742F8184730040FD28 /* PokèDex */,
+				85F24FDE2F83E6F600D2376B /* PokèDexTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		85421F732F8184730040FD28 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		85F24FDD2F83E6F600D2376B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -156,7 +216,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		85F24FDB2F83E6F600D2376B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		85F24FE42F83E6F600D2376B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 85421F742F8184730040FD28 /* PokèDex */;
+			targetProxy = 85F24FE32F83E6F600D2376B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		85421F7E2F8184760040FD28 /* Debug */ = {
@@ -306,8 +381,13 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.stock.Poke-Dex";
+				PRODUCT_MODULE_NAME = PokeDex;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -343,14 +423,59 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.stock.Poke-Dex";
+				PRODUCT_MODULE_NAME = PokeDex;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		85F24FE62F83E6F600D2376B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.stock.Poke-DexTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PokèDex.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/PokèDex";
+			};
+			name = Debug;
+		};
+		85F24FE72F83E6F600D2376B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.stock.Poke-DexTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PokèDex.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/PokèDex";
 			};
 			name = Release;
 		};
@@ -371,6 +496,15 @@
 			buildConfigurations = (
 				85421F812F8184760040FD28 /* Debug */,
 				85421F822F8184760040FD28 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		85F24FE52F83E6F600D2376B /* Build configuration list for PBXNativeTarget "PokèDexTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				85F24FE62F83E6F600D2376B /* Debug */,
+				85F24FE72F83E6F600D2376B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
