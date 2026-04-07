@@ -1,7 +1,7 @@
 import shared
 
 /// ObservableObject wrapper around the KMP `PokemonListViewModel`.
-/// All pagination &  search logic lives here 
+/// All pagination and  search logic lives here
 @MainActor
 final class PokemonListStore: ObservableObject {
     

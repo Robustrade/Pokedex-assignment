@@ -6,6 +6,7 @@
 //
 import SwiftUI
 import shared
+
 struct PokemonAbilitiesSection: View {
     let detail: PokemonDetail
     let store: PokemonDetailStore

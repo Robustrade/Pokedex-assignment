@@ -14,7 +14,7 @@ struct StatBarView: View {
             
             Text("\(value)")
                 .font(.caption.weight(.semibold).monospacedDigit())
-                .frame(width: 32,alignment: .leading)
+                .frame(width: 32, alignment: .leading)
             
             ProgressView(value: Double(value)/100.0)
                 .progressViewStyle(.linear)

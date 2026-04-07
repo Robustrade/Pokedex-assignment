@@ -9,9 +9,6 @@
 import SwiftUI
 import shared
 
-import SwiftUI
-import shared
-
 struct FavoritesView: View {
 
     @StateObject private var store = FavoritesStore()

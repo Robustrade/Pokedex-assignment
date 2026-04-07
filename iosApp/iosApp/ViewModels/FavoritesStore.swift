@@ -24,6 +24,9 @@ final class FavoritesStore: ObservableObject {
     
     private func observeFavorites() {
         viewModel.favorites.observe(as: [Pokemon].self) { [weak self] list in
+            for p in list {
+                print("⭐ FAV: id=\(p.id) name=\(p.name) imageUrl=\(p.imageUrl)")
+            }
             self?.favorites = list
         }
     }

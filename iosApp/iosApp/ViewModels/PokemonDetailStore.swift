@@ -11,7 +11,7 @@ final class PokemonDetailStore: ObservableObject {
     private let viewModel: PokemonDetailViewModel
     
     init(pokemonName: String, repository: PokemonRepository = KoinDependencies.shared.repository) {
-        viewModel = PokemonDetailViewModel(pokemonName: pokemonName,repository: repository)
+        viewModel = PokemonDetailViewModel(pokemonName: pokemonName, repository: repository)
         loadInitialState()
         observeState()
     }

@@ -1,7 +1,6 @@
 import SwiftUI
 import shared
 
-
 struct PokemonListView: View {
     
     @StateObject private var store = PokemonListStore()

@@ -1,5 +1,5 @@
 //
-//  PokemonError.swift
+//  PokemonListError.swift
 //  iosApp
 //
 //  Created by vishwas on 4/3/26.
