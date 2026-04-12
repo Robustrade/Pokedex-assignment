@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import shared
 
 struct ListView: View {
     
@@ -13,15 +14,46 @@ struct ListView: View {
     @State private var searchText = ""
     
     private let column = [
-        GridItem(.flexible(), spacing: 8),
-        GridItem(.flexible(), spacing: 8)
+        GridItem(.flexible(minimum: 0, maximum: .infinity), spacing: 12),
+        GridItem(.flexible(minimum: 0, maximum: .infinity), spacing: 12)
     ]
     
     var body: some View {
-        ScrollView {
-            LazyVGrid(columns: column) {
-                RoundedRectangle(cornerRadius: 12)
+        NavigationStack {
+            Group {
+                switch viewModel.listState {
+                case is PokemonListState.Loading:
+                    ProgressView("Loading Pokémon…")
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                case let error as PokemonListState.Error :
+                    Text("Error \(error.debugDescription)")
+                case let success as PokemonListState.Success:
+                    let list = success.pokemon
+                    ScrollView {
+                        LazyVGrid(columns: column, spacing: 12) {
+                            ForEach(list, id: \.id) { pokemon in
+                                NavigationLink {
+                                    Text(pokemon.name.capitalized)
+                                } label: {
+                                    GridCell(pokemon: pokemon)
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                        .padding(.vertical, 12)
+                    }
+                    .scrollIndicators(.hidden)
+                    .padding(.horizontal, 12)
+                    .refreshable {
+                        viewModel.refresh()
+                    }
+                    
+                default:
+                    EmptyView()
+                }
             }
+            .searchable(text: $searchText)
+            .navigationTitle("Pokédex")
         }
     }
 }
