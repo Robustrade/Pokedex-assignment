@@ -7,8 +7,7 @@ struct PokemonCardView: View {
     let pokemon: Pokemon
 
     var body: some View {
-        let cleanUrl = pokemon.imageUrl.trimmingCharacters(in: .whitespacesAndNewlines)
-        let finalUrl = cleanUrl.isEmpty ? "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(pokemon.id).png" : cleanUrl
+        let finalUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(pokemon.id).png"
 
         VStack(spacing: 4) {
             // Artwork
