@@ -1,0 +1,52 @@
+name: iOS CI
+
+on:
+  push:
+    branches: [ "ios/**" ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: macos-15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Build shared XCFramework
+        run: ./gradlew :shared:assembleSharedDebugXCFramework
+
+      - name: Generate Xcode Project via XcodeGen
+        working-directory: iosApp
+        run: |
+          brew install xcodegen
+          xcodegen generate
+
+      - name: Run SwiftLint
+        working-directory: iosApp
+        run: swiftlint lint || echo "Linting finished with warnings"
+
+      - name: Build iOS app (simulator)
+        working-directory: iosApp
+        run: |
+          xcodebuild build \
+            -project iosApp.xcodeproj \
+            -scheme iosApp \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
+
+      - name: Run tests
+        working-directory: iosApp
+        run: |
+          xcodebuild test \
+            -project iosApp.xcodeproj \
+            -scheme iosApp \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 16'
