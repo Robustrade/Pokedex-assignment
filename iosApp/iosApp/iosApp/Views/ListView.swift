@@ -29,25 +29,28 @@ struct ListView: View {
                     Text("Error \(error.debugDescription)")
                 case let success as PokemonListState.Success:
                     let list = success.pokemon
-                    ScrollView {
-                        LazyVGrid(columns: column, spacing: 12) {
-                            ForEach(list, id: \.id) { pokemon in
-                                NavigationLink {
-                                    Text(pokemon.name.capitalized)
-                                } label: {
-                                    GridCell(pokemon: pokemon)
+                    if list.isEmpty {
+                        EmptyStateView(iconName: "exclamationmark.magnifyingglass", title: "No Pokémon Found")
+                    } else {
+                        ScrollView {
+                            LazyVGrid(columns: column, spacing: 12) {
+                                ForEach(list, id: \.id) { pokemon in
+                                    NavigationLink {
+                                        Text(pokemon.name.capitalized)
+                                    } label: {
+                                        GridCell(pokemon: pokemon)
+                                    }
+                                    .buttonStyle(.plain)
                                 }
-                                .buttonStyle(.plain)
                             }
+                            .padding(.vertical, 12)
                         }
-                        .padding(.vertical, 12)
+                        .scrollIndicators(.hidden)
+                        .padding(.horizontal, 12)
+                        .refreshable {
+                            viewModel.refresh()
+                        }
                     }
-                    .scrollIndicators(.hidden)
-                    .padding(.horizontal, 12)
-                    .refreshable {
-                        viewModel.refresh()
-                    }
-                    
                 default:
                     EmptyView()
                 }
