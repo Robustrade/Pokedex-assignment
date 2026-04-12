@@ -28,9 +28,7 @@ jobs:
 
       - name: Run SwiftLint
         working-directory: iosApp
-        run: |
-          brew install swiftlint
-          swiftlint lint || echo "Linting finished with warnings"
+        run: swiftlint lint || echo "Linting finished with warnings"
 
       - name: Build iOS app (simulator)
         working-directory: iosApp
