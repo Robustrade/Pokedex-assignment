@@ -20,7 +20,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Build shared XCFramework
-        run: ./gradlew :shared:assembleSharedXCFramework
+        run: ./gradlew :shared:assembleSharedDebugXCFramework
 
       - name: Install CocoaPods dependencies
         working-directory: iosApp
