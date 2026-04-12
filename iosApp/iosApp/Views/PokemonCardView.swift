@@ -6,8 +6,12 @@ struct PokemonCardView: View {
 
     let pokemon: Pokemon
 
+    @State private var imageId = UUID()
+
     var body: some View {
-        let finalUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(pokemon.id).png"
+        // Enforce pure static string construction to bypass string corruptions.
+        let safeId = pokemon.id > 0 ? pokemon.id : Int32(URL(string: pokemon.imageUrl)?.lastPathComponent.replacingOccurrences(of: ".png", with: "") ?? "0") ?? 1
+        let finalUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(safeId).png"
 
         VStack(spacing: 4) {
             // Artwork
@@ -18,13 +22,21 @@ struct PokemonCardView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                 case .failure:
-                    Image(systemName: "exclamationmark.triangle")
+                    Image(systemName: "photo.circle")
                         .font(.largeTitle)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.tertiary)
+                        .onAppear {
+                            // SwiftUI AsyncImage failure bug when mounted in inactive TabView
+                            // Refresh id to force a remount when visible
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                imageId = UUID()
+                            }
+                        }
                 default:
                     ProgressView()
                 }
             }
+            .id(imageId)
             .frame(width: 100, height: 100)
             .padding(.top, 8)
 
