@@ -55,6 +55,9 @@ struct ListView: View {
             .searchable(text: $searchText)
             .navigationTitle("Pokédex")
         }
+        .onChange(of: searchText) { newValue in
+            viewModel.search(newValue)
+        }
     }
 }
 
