@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct RootView: View {
+    @Environment(\.viewModelFactory) private var viewModelFactory
+
     var body: some View {
         TabView {
-            ListView()
+            ListView(viewModel: viewModelFactory.makeListViewModel)
                 .tabItem {
                     Label("Pokédex", systemImage: "square.grid.2x2.fill")
                 }
@@ -22,3 +24,7 @@ struct RootView: View {
     }
 }
 
+#Preview {
+    RootView()
+        .environment(\.viewModelFactory, AppDependencies())
+}

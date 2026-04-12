@@ -14,7 +14,7 @@ final class ListViewModel: ObservableObject {
     private let viewModel: PokemonListViewModel
     private var stateTask: Task<Void, Never>?
 
-    init(repository: PokemonRepository = KoinDependencyManager.shared.repository) {
+    init(repository: PokemonRepository) {
         self.viewModel = PokemonListViewModel(repository: repository)
 
         if let currentState = viewModel.state.value as? PokemonListState {

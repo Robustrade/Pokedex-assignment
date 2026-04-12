@@ -9,9 +9,13 @@ import SwiftUI
 import shared
 
 struct ListView: View {
-    
-    @StateObject private var viewModel = ListViewModel()
+    @Environment(\.viewModelFactory) private var viewModelFactory
+    @StateObject private var viewModel: ListViewModel
     @State private var searchText = ""
+
+    init(viewModel: @escaping () -> ListViewModel) {
+        _viewModel = StateObject(wrappedValue: viewModel())
+    }
     
     private let column = [
         GridItem(.flexible(minimum: 0, maximum: .infinity), spacing: 12),
@@ -30,13 +34,19 @@ struct ListView: View {
                 case let success as PokemonListState.Success:
                     let list = success.pokemon
                     if list.isEmpty {
-                        EmptyStateView(iconName: "exclamationmark.magnifyingglass", title: "No Pokémon Found")
+                        EmptyStateView(
+                            iconName: "exclamationmark.magnifyingglass",
+                            title: "No Pokémon Found"
+                        )
                     } else {
                         ScrollView {
                             LazyVGrid(columns: column, spacing: 12) {
                                 ForEach(list, id: \.id) { pokemon in
                                     NavigationLink {
-                                        Text(pokemon.name.capitalized)
+                                        DetailsView(
+                                            name: pokemon.name,
+                                            viewModel: viewModelFactory.makeDetailsViewModel
+                                        )
                                     } label: {
                                         GridCell(pokemon: pokemon)
                                     }
@@ -62,8 +72,4 @@ struct ListView: View {
             viewModel.search(newValue)
         }
     }
-}
-
-#Preview {
-    ListView()
 }

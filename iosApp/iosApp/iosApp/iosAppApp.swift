@@ -6,18 +6,19 @@
 //
 
 import SwiftUI
-import shared
 
 @main
 struct iosAppApp: App {
+    private let dependencies: ViewModelFactory
     
     init() {
-        _ = KoinDependencyManager.shared
+        self.dependencies = AppDependencies()
     }
     
     var body: some Scene {
         WindowGroup {
             RootView()
+                .environment(\.viewModelFactory, dependencies)
         }
     }
 }
