@@ -7,9 +7,12 @@ struct PokemonCardView: View {
     let pokemon: Pokemon
 
     var body: some View {
+        let cleanUrl = pokemon.imageUrl.trimmingCharacters(in: .whitespacesAndNewlines)
+        let finalUrl = cleanUrl.isEmpty ? "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(pokemon.id).png" : cleanUrl
+
         VStack(spacing: 4) {
             // Artwork
-            AsyncImage(url: URL(string: pokemon.imageUrl)) { phase in
+            AsyncImage(url: URL(string: finalUrl)) { phase in
                 switch phase {
                 case .success(let image):
                     image
