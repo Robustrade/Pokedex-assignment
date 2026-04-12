@@ -22,9 +22,11 @@ jobs:
       - name: Build shared XCFramework
         run: ./gradlew :shared:assembleSharedDebugXCFramework
 
-      - name: Install CocoaPods dependencies
+      - name: Generate Xcode Project via XcodeGen
         working-directory: iosApp
-        run: pod install
+        run: |
+          brew install xcodegen
+          xcodegen generate
 
       - name: Run SwiftLint
         working-directory: iosApp
@@ -34,7 +36,7 @@ jobs:
         working-directory: iosApp
         run: |
           xcodebuild build \
-            -workspace iosApp.xcworkspace \
+            -project iosApp.xcodeproj \
             -scheme iosApp \
             -sdk iphonesimulator \
             -destination 'platform=iOS Simulator,name=iPhone 16' \
@@ -44,7 +46,7 @@ jobs:
         working-directory: iosApp
         run: |
           xcodebuild test \
-            -workspace iosApp.xcworkspace \
+            -project iosApp.xcodeproj \
             -scheme iosApp \
             -sdk iphonesimulator \
             -destination 'platform=iOS Simulator,name=iPhone 16'
