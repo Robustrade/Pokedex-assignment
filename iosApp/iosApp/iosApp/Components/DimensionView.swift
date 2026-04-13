@@ -14,7 +14,7 @@ struct DimensionView: View {
     let pokemonDetail: PokemonDetail
     
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 8) {
             detailCard(
                 iconName: "ruler",
                 title: "Height",
@@ -52,7 +52,7 @@ struct DimensionView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 10)
-        .padding(.horizontal, 12)
+        .padding(.horizontal, 6)
         .background(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .fill(.ultraThinMaterial)

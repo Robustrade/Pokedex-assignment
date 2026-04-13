@@ -35,6 +35,10 @@ final class DetailsViewModel: ObservableObject {
         viewModel.toggleFavorite()
     }
     
+    func retry() {
+        viewModel.retry()
+    }
+    
     private func observeState() {
         let stateFlow = viewModel.state
         

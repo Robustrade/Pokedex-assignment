@@ -34,28 +34,43 @@ struct GridCell: View {
     }
 
     var body: some View {
-        VStack(spacing: 10) {
-            imageContent
-                .frame(width: 96, height: 96)
+        ZStack(alignment: .top) {
+            VStack(spacing: 10) {
+                imageContent
+                    .frame(width: 96, height: 96)
 
-            Text(pokemon.name.capitalized)
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.primary)
-                .lineLimit(1)
-                .frame(maxWidth: .infinity)
+                Text(pokemon.name.capitalized)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+                    .frame(maxWidth: .infinity)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 14)
+            .frame(maxWidth: .infinity, minHeight: 150, alignment: .top)
+            .background(
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .fill(cardFill)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .stroke(cardStroke, lineWidth: 1)
+            )
+            .shadow(color: cardShadow, radius: 6, x: 0, y: 2)
+            
+            Text(PokemonDisplayFormatter.formattedID(pokemon.id))
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 4)
+                .padding(.vertical, 2)
+                .background(
+                    Capsule()
+                        .stroke(.secondary.opacity(0.4), lineWidth: 1)
+                )
+                .padding(8)
+                .frame(maxWidth: .infinity, alignment: .trailing)
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 14)
-        .frame(maxWidth: .infinity, minHeight: 150, alignment: .top)
-        .background(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(cardFill)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(cardStroke, lineWidth: 1)
-        )
-        .shadow(color: cardShadow, radius: 6, x: 0, y: 2)
+        
         .task {
             imageLoader.loadIfNeeded()
         }

@@ -12,9 +12,15 @@ import Charts
 struct DetailsView: View {
     let name: String
     @StateObject private var viewModel: DetailsViewModel
+    private let hapticsManager: HapticsProviding
     
-    init(name: String, viewModel: @escaping (String) -> DetailsViewModel) {
+    init(
+        name: String,
+        viewModel: @escaping (String) -> DetailsViewModel,
+        hapticsManager: HapticsProviding = HapticsManager.shared
+    ) {
         self.name = name
+        self.hapticsManager = hapticsManager
         _viewModel = StateObject(wrappedValue: viewModel(name))
     }
     
@@ -43,7 +49,11 @@ struct DetailsView: View {
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
+                            let willBecomeFavourite = !pokemonDetail.isFavorite
                             viewModel.toggleFavourite()
+                            if willBecomeFavourite {
+                                hapticsManager.favouriteAdded()
+                            }
                         } label: {
                             Image(systemName: pokemonDetail.isFavorite ? "heart.fill" : "heart")
                         }
@@ -57,6 +67,9 @@ struct DetailsView: View {
                 EmptyView()
             }
         }
+        .onAppear {
+            viewModel.retry()
+        }
     }
 }
 
@@ -65,7 +78,22 @@ struct PokemonHeaderView: View {
     
     var body: some View {
         ZStack(alignment: .center) {
-            PokemonImageView(imageUrl: pokemonDetail.imageUrl, firstType: pokemonDetail.types.first)
+            
+            VStack(spacing: 0) {
+                Text(PokemonDisplayFormatter.formattedID(pokemonDetail.id))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 2)
+                    .background(
+                        Capsule()
+                            .stroke(.secondary.opacity(0.4), lineWidth: 1)
+                    )
+                    .padding(8)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                
+                PokemonImageView(imageUrl: pokemonDetail.imageUrl, firstType: pokemonDetail.types.first)
+            }
             
             HStack {
                 DimensionView(pokemonDetail: pokemonDetail)
@@ -110,7 +138,7 @@ struct PokemonImageView: View {
             Image(systemName: "photo.badge.exclamationmark")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(height: 200)
+                .frame(height: 100)
         }
     }
 }
@@ -149,7 +177,7 @@ struct PokemonAbilitiesSectionView: View {
     let abilities: [String]
     
     private let abilityColumns = [
-        GridItem(.adaptive(minimum: 120), spacing: 8, alignment: .leading)
+        GridItem(.adaptive(minimum: 60), spacing: 8, alignment: .leading)
     ]
     
     var body: some View {
@@ -161,7 +189,7 @@ struct PokemonAbilitiesSectionView: View {
                     Text(ability.replacingOccurrences(of: "-", with: " ").capitalized)
                         .font(.subheadline.weight(.medium))
                         .lineLimit(1)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .frame(maxWidth: .infinity, alignment: .center)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
                         .background(
