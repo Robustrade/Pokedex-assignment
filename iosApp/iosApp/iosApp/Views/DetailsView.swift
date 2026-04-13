@@ -12,7 +12,6 @@ import Charts
 struct DetailsView: View {
     let name: String
     @StateObject private var viewModel: DetailsViewModel
-    @State private var isPulsing = false
     
     init(name: String, viewModel: @escaping (String) -> DetailsViewModel) {
         self.name = name
@@ -30,62 +29,13 @@ struct DetailsView: View {
                 let pokemonDetail = success.pokemon
                 ScrollView {
                     VStack(spacing: 12) {
-                        ZStack(alignment: .center) {
-                            AsyncImage(
-                                url: URL(string: pokemonDetail.imageUrl)) { image in
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(height: 200)
-                                        .background {
-                                            Circle()
-                                                .fill(TypeColors.background(for: pokemonDetail.types.first))
-                                                .blur(radius: 40)
-                                                .scaleEffect(isPulsing ? 1.2 : 0.8)
-                                                .frame(width: .infinity, height: .infinity)
-                                                .onAppear {
-                                                    withAnimation(
-                                                        .easeIn(duration: 2)
-                                                        .repeatForever(autoreverses: true)
-                                                    ) {
-                                                        isPulsing = true
-                                                    }
-                                                }.onDisappear {
-                                                    isPulsing = false
-                                                }
-                                        }
-                                        .transition(.opacity)
-                                } placeholder: {
-                                    Image(systemName: "photo.badge.exclamationmark")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(height: 200)
-                                }
-                                
-                            
-                            HStack {
-                                DimensionView(pokemonDetail: pokemonDetail)
-                                Spacer()
-                            }
-                        }
-                        .frame(maxWidth: .infinity)
-
-                        pokemonTypeView(pokemonDetail: pokemonDetail)
+                        PokemonHeaderView(pokemonDetail: pokemonDetail)
                         
-                        VStack(alignment: .leading, spacing: 8) {
-                            sectionTitle("Stats")
-                                .padding(.leading)
-                                .padding(.top)
-                            StatsView(pokemonDetail: pokemonDetail)
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                .strokeBorder(.quaternary, lineWidth: 1)
-                        )
+                        PokemonTypeListView(types: pokemonDetail.types)
                         
-                        abilitySection(pokemonDetail)
+                        PokemonStatsSectionView(pokemonDetail: pokemonDetail)
                         
+                        PokemonAbilitiesSectionView(abilities: pokemonDetail.abilities)
                     }
                 }
                 .scrollIndicators(.hidden)
@@ -108,26 +58,106 @@ struct DetailsView: View {
             }
         }
     }
+}
+
+struct PokemonHeaderView: View {
+    let pokemonDetail: PokemonDetail
     
-    @ViewBuilder
-    func pokemonTypeView(pokemonDetail: PokemonDetail) -> some View {
+    var body: some View {
+        ZStack(alignment: .center) {
+            PokemonImageView(imageUrl: pokemonDetail.imageUrl, firstType: pokemonDetail.types.first)
+            
+            HStack {
+                DimensionView(pokemonDetail: pokemonDetail)
+                Spacer()
+            }
+        }
+        .frame(maxWidth: .infinity)
+    }
+}
+
+struct PokemonImageView: View {
+    let imageUrl: String
+    let firstType: String?
+    @State private var isPulsing = false
+    
+    var body: some View {
+        AsyncImage(url: URL(string: imageUrl)) { image in
+            image
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(height: 200)
+                .background {
+                    Circle()
+                        .fill(TypeColors.background(for: firstType))
+                        .blur(radius: 40)
+                        .scaleEffect(isPulsing ? 1.2 : 0.8)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .onAppear {
+                            withAnimation(
+                                .easeIn(duration: 2)
+                                .repeatForever(autoreverses: true)
+                            ) {
+                                isPulsing = true
+                            }
+                        }
+                        .onDisappear {
+                            isPulsing = false
+                        }
+                }
+                .transition(.opacity)
+        } placeholder: {
+            Image(systemName: "photo.badge.exclamationmark")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(height: 200)
+        }
+    }
+}
+
+struct PokemonTypeListView: View {
+    let types: [String]
+    
+    var body: some View {
         HStack(spacing: 8) {
-            ForEach(pokemonDetail.types, id: \.self) { type in
+            ForEach(types, id: \.self) { type in
                 TypeChipView(type: type)
             }
         }
     }
-    
-    func abilitySection(_ pokemonDetail: PokemonDetail) -> some View {
-        let abilityColumns = [
-            GridItem(.adaptive(minimum: 120), spacing: 8, alignment: .leading)
-        ]
+}
 
-        return VStack(alignment: .leading, spacing: 12) {
-            sectionTitle("Abilities")
+struct PokemonStatsSectionView: View {
+    let pokemonDetail: PokemonDetail
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            SectionTitleView(title: "Stats")
+                .padding(.leading)
+                .padding(.top)
+            StatsView(pokemonDetail: pokemonDetail)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .strokeBorder(.quaternary, lineWidth: 1)
+        )
+    }
+}
+
+struct PokemonAbilitiesSectionView: View {
+    let abilities: [String]
+    
+    private let abilityColumns = [
+        GridItem(.adaptive(minimum: 120), spacing: 8, alignment: .leading)
+    ]
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            SectionTitleView(title: "Abilities")
 
             LazyVGrid(columns: abilityColumns, alignment: .leading, spacing: 8) {
-                ForEach(pokemonDetail.abilities, id: \.self) { ability in
+                ForEach(abilities, id: \.self) { ability in
                     Text(ability.replacingOccurrences(of: "-", with: " ").capitalized)
                         .font(.subheadline.weight(.medium))
                         .lineLimit(1)
@@ -148,8 +178,12 @@ struct DetailsView: View {
                 .strokeBorder(.quaternary, lineWidth: 1)
         )
     }
+}
 
-    private func sectionTitle(_ title: String) -> some View {
+struct SectionTitleView: View {
+    let title: String
+    
+    var body: some View {
         Text(title)
             .font(.headline)
             .frame(maxWidth: .infinity, alignment: .leading)
