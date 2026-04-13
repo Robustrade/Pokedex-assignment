@@ -51,6 +51,11 @@ struct ListView: View {
                                         GridCell(pokemon: pokemon)
                                     }
                                     .buttonStyle(.plain)
+                                    .onAppear {
+                                        if pokemon.id == list.last?.id {
+                                            viewModel.loadNextPage()
+                                        }
+                                    }
                                 }
                             }
                             .padding(.vertical, 12)

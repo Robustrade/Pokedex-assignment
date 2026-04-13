@@ -10,7 +10,7 @@ import Combine
 
 final class ListViewModel: ObservableObject {
 
-    @MainActor @Published private(set) var listState: PokemonListState = .Loading()
+    @Published private(set) var listState: PokemonListState = .Loading()
     private let viewModel: PokemonListViewModel
     private var stateTask: Task<Void, Never>?
 
@@ -47,7 +47,9 @@ final class ListViewModel: ObservableObject {
         stateTask = Task { [weak self] in
             for await state in stateFlow.stream(of: PokemonListState.self) {
                 guard let self else { return }
-                self.listState = state
+                await MainActor.run {
+                    self.listState = state
+                }
             }
         }
     }
