@@ -16,7 +16,7 @@ struct RootView: View {
                 .tabItem {
                     Label("Pokédex", systemImage: "square.grid.2x2.fill")
                 }
-            FavouritesView()
+            FavouritesView(viewModel: viewModelFactory.makeFavouritesViewModel)
                 .tabItem {
                     Label("Favourites", systemImage: "heart.fill")
                 }

@@ -6,13 +6,48 @@
 //
 
 import SwiftUI
+import shared
 
 struct FavouritesView: View {
+    @StateObject private var viewModel: FavouritesViewModel
+
+    init(viewModel: @escaping () -> FavouritesViewModel) {
+        _viewModel = StateObject(wrappedValue: viewModel())
+    }
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationStack {
+            Group {
+                if viewModel.favorites.isEmpty {
+                    EmptyStateView(
+                        iconName: "heart.slash",
+                        title: "No Favourites Yet"
+                    )
+                } else {
+                    VStack(alignment: .leading, spacing: 8) {
+                        List(viewModel.favorites, id: \.id) { pokemon in
+                            FavoriteRowView(pokemon: pokemon)
+                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                    Button(role: .destructive) {
+                                        viewModel.unfavourite(pokemon)
+                                    } label: {
+                                        Label("Unfavourite", systemImage: "heart.slash")
+                                    }
+                                }
+                                .listRowInsets(EdgeInsets(top: 4, leading: 12, bottom: 4, trailing: 12))
+                                .listRowSeparator(.hidden)
+                                .listRowBackground(Color.clear)
+                        }
+                        .listStyle(.plain)
+                        .scrollContentBackground(.hidden)
+                    }
+                }
+            }
+            .navigationTitle("Favourites")
+        }
     }
 }
 
 #Preview {
-    FavouritesView()
+    FavouritesView(viewModel: { AppDependencies().makeFavouritesViewModel() })
 }
