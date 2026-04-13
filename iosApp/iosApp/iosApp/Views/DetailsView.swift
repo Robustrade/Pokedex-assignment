@@ -73,7 +73,9 @@ struct DetailsView: View {
                         pokemonTypeView(pokemonDetail: pokemonDetail)
                         
                         VStack(alignment: .leading, spacing: 8) {
-                            sectionTitle("Stats").padding()
+                            sectionTitle("Stats")
+                                .padding(.leading)
+                                .padding(.top)
                             StatsView(pokemonDetail: pokemonDetail)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
