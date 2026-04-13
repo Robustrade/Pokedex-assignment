@@ -31,6 +31,10 @@ final class DetailsViewModel: ObservableObject {
         stateTask?.cancel()
     }
     
+    func toggleFavourite() {
+        viewModel.toggleFavorite()
+    }
+    
     private func observeState() {
         let stateFlow = viewModel.state
         
