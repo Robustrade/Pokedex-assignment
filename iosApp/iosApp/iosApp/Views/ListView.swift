@@ -29,8 +29,29 @@ struct ListView: View {
                 case is PokemonListState.Loading:
                     ProgressView("Loading Pokémon…")
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                case let error as PokemonListState.Error :
-                    Text("Error \(error.debugDescription)")
+                case let error as PokemonListState.Error:
+                    VStack(spacing: 16) {
+                        Image(systemName: "wifi.exclamationmark")
+                            .font(.system(size: 48))
+                            .foregroundStyle(.secondary)
+                        Text("Something went wrong")
+                            .font(.title3.weight(.semibold))
+                        Text(error.message)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                        Button {
+                            viewModel.refresh()
+                        } label: {
+                            Label("Retry", systemImage: "arrow.clockwise")
+                                .font(.subheadline.weight(.medium))
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 10)
+                                .background(.tint.opacity(0.12), in: Capsule())
+                        }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 case let success as PokemonListState.Success:
                     let list = success.pokemon
                     if list.isEmpty {
