@@ -107,38 +107,57 @@ struct PokemonHeaderView: View {
 struct PokemonImageView: View {
     let imageUrl: String
     let firstType: String?
+    @StateObject private var imageLoader: PokemonImageLoader
     @State private var isPulsing = false
-    
+
+    init(imageUrl: String, firstType: String?) {
+        self.imageUrl = imageUrl
+        self.firstType = firstType
+        _imageLoader = StateObject(wrappedValue: PokemonImageLoader(urlString: imageUrl))
+    }
+
     var body: some View {
-        AsyncImage(url: URL(string: imageUrl)) { image in
-            image
+        imageContent
+            .frame(height: 200)
+            .background {
+                Circle()
+                    .fill(TypeColors.background(for: firstType))
+                    .blur(radius: 40)
+                    .scaleEffect(isPulsing ? 1.2 : 0.8)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .onAppear {
+                        withAnimation(
+                            .easeIn(duration: 2)
+                            .repeatForever(autoreverses: true)
+                        ) {
+                            isPulsing = true
+                        }
+                    }
+                    .onDisappear {
+                        isPulsing = false
+                    }
+            }
+            .transition(.opacity)
+            .task {
+                imageLoader.loadIfNeeded()
+            }
+    }
+
+    @ViewBuilder
+    private var imageContent: some View {
+        if let uiImage = imageLoader.image {
+            Image(uiImage: uiImage)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(height: 200)
-                .background {
-                    Circle()
-                        .fill(TypeColors.background(for: firstType))
-                        .blur(radius: 40)
-                        .scaleEffect(isPulsing ? 1.2 : 0.8)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .onAppear {
-                            withAnimation(
-                                .easeIn(duration: 2)
-                                .repeatForever(autoreverses: true)
-                            ) {
-                                isPulsing = true
-                            }
-                        }
-                        .onDisappear {
-                            isPulsing = false
-                        }
-                }
-                .transition(.opacity)
-        } placeholder: {
-            Image(systemName: "photo.badge.exclamationmark")
+        } else if imageLoader.isLoading {
+            ProgressView()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else {
+            Image(systemName: imageLoader.hasFailed ? "photo.badge.exclamationmark" : "photo")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(height: 100)
+                .foregroundStyle(.secondary)
+                .padding(40)
         }
     }
 }
