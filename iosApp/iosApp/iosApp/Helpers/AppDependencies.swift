@@ -28,7 +28,7 @@ final class AppDependencies: ViewModelFactory {
     func makeDetailsViewModel(name: String) -> DetailsViewModel {
         DetailsViewModel(name: name, repository: repository)
     }
-    
+
     func makeFavouritesViewModel() -> FavouritesViewModel {
         FavouritesViewModel(repository: repository)
     }
@@ -42,7 +42,7 @@ private final class DefaultViewModelFactory: ViewModelFactory {
     func makeDetailsViewModel(name: String) -> DetailsViewModel {
         fatalError("ViewModelFactory not configured in Environment")
     }
-    
+
     func makeFavouritesViewModel() -> FavouritesViewModel {
         fatalError("ViewModelFactory not configured in Environment")
     }

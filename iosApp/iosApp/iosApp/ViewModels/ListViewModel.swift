@@ -36,7 +36,7 @@ final class ListViewModel: ObservableObject {
     func loadNextPage() {
         viewModel.loadNextPage()
     }
-    
+
     func search(_ searchText: String) {
         viewModel.search(query: searchText)
     }

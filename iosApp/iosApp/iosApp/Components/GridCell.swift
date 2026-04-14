@@ -57,7 +57,7 @@ struct GridCell: View {
                     .stroke(cardStroke, lineWidth: 1)
             )
             .shadow(color: cardShadow, radius: 6, x: 0, y: 2)
-            
+
             Text(PokemonDisplayFormatter.formattedID(pokemon.id))
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -70,7 +70,7 @@ struct GridCell: View {
                 .padding(8)
                 .frame(maxWidth: .infinity, alignment: .trailing)
         }
-        
+
         .task {
             imageLoader.loadIfNeeded()
         }

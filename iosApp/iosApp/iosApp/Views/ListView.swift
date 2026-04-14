@@ -16,12 +16,12 @@ struct ListView: View {
     init(viewModel: @escaping () -> ListViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel())
     }
-    
+
     private let column = [
         GridItem(.flexible(minimum: 0, maximum: .infinity), spacing: 12),
         GridItem(.flexible(minimum: 0, maximum: .infinity), spacing: 12)
     ]
-    
+
     var body: some View {
         NavigationStack {
             Group {

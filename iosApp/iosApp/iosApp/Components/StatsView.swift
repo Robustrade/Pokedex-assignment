@@ -69,7 +69,7 @@ struct StatsView: View {
                 .strokeBorder(.quaternary, lineWidth: 1)
         )
     }
-    
+
     private var maxStatValue: Int {
         pokemonDetail.stats.map { Int($0.value) }.max() ?? 100
     }
@@ -86,5 +86,5 @@ struct StatsView: View {
             return statName.uppercased()
         }
     }
-    
+
 }

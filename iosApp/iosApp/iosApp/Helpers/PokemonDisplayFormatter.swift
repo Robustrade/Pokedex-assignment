@@ -15,7 +15,7 @@ enum PokemonDisplayFormatter {
     static func formattedID(_ id: Int64) -> String {
         String(format: "#%03d", Int(id))
     }
-    
+
     static func formattedName(_ name: String) -> String {
         name.capitalized
     }

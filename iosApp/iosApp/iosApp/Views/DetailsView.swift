@@ -13,7 +13,7 @@ struct DetailsView: View {
     let name: String
     @StateObject private var viewModel: DetailsViewModel
     private let hapticsManager: HapticsProviding
-    
+
     init(
         name: String,
         viewModel: @escaping (String) -> DetailsViewModel,
@@ -23,9 +23,9 @@ struct DetailsView: View {
         self.hapticsManager = hapticsManager
         _viewModel = StateObject(wrappedValue: viewModel(name))
     }
-    
+
     private let bgFill = Color(uiColor: UIColor.secondarySystemBackground)
-    
+
     var body: some View {
         Group {
             switch viewModel.detailState {
@@ -36,11 +36,11 @@ struct DetailsView: View {
                 ScrollView {
                     VStack(spacing: 12) {
                         PokemonHeaderView(pokemonDetail: pokemonDetail)
-                        
+
                         PokemonTypeListView(types: pokemonDetail.types)
-                        
+
                         PokemonStatsSectionView(pokemonDetail: pokemonDetail)
-                        
+
                         PokemonAbilitiesSectionView(abilities: pokemonDetail.abilities)
                     }
                 }
@@ -75,10 +75,10 @@ struct DetailsView: View {
 
 struct PokemonHeaderView: View {
     let pokemonDetail: PokemonDetail
-    
+
     var body: some View {
         ZStack(alignment: .center) {
-            
+
             VStack(spacing: 0) {
                 Text(PokemonDisplayFormatter.formattedID(pokemonDetail.id))
                     .font(.caption)
@@ -91,10 +91,10 @@ struct PokemonHeaderView: View {
                     )
                     .padding(8)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                
+
                 PokemonImageView(imageUrl: pokemonDetail.imageUrl, firstType: pokemonDetail.types.first)
             }
-            
+
             HStack {
                 DimensionView(pokemonDetail: pokemonDetail)
                 Spacer()
@@ -164,7 +164,7 @@ struct PokemonImageView: View {
 
 struct PokemonTypeListView: View {
     let types: [String]
-    
+
     var body: some View {
         HStack(spacing: 8) {
             ForEach(types, id: \.self) { type in
@@ -176,7 +176,7 @@ struct PokemonTypeListView: View {
 
 struct PokemonStatsSectionView: View {
     let pokemonDetail: PokemonDetail
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             SectionTitleView(title: "Stats")
@@ -192,11 +192,9 @@ struct PokemonStatsSectionView: View {
     }
 }
 
-
-
 struct SectionTitleView: View {
     let title: String
-    
+
     var body: some View {
         Text(title)
             .font(.headline)

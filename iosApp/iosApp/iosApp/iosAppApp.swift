@@ -8,13 +8,13 @@
 import SwiftUI
 
 @main
-struct iosAppApp: App {
+struct IosApp: App {
     private let dependencies: ViewModelFactory
-    
+
     init() {
         self.dependencies = AppDependencies()
     }
-    
+
     var body: some Scene {
         WindowGroup {
             RootView()

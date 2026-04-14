@@ -9,11 +9,11 @@ import SwiftUI
 
 struct PokemonAbilitiesSectionView: View {
     let abilities: [String]
-    
+
     private let abilityColumns = [
         GridItem(.adaptive(minimum: 100), spacing: 8, alignment: .leading)
     ]
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             SectionTitleView(title: "Abilities")
