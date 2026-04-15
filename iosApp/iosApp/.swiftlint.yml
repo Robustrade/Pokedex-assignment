@@ -1,0 +1,51 @@
+disabled_rules:
+  - trailing_whitespace
+  - line_length
+  - file_length
+  - type_body_length
+  - function_body_length
+
+opt_in_rules:
+  - empty_count
+  - empty_string
+  - closure_spacing
+  - contains_over_first_not_nil
+  - discouraged_object_literal
+  - explicit_init
+  - first_where
+  - implicit_return
+  - joined_default_parameter
+  - modifier_order
+  - overridden_super_call
+  - private_action
+  - private_outlet
+  - redundant_nil_coalescing
+  - sorted_first_last
+  - toggle_bool
+  - unneeded_parentheses_in_closure_argument
+
+included:
+  - iosApp
+
+excluded:
+  - Pods
+  - iosAppTests
+
+identifier_name:
+  min_length: 1
+  max_length: 60
+  excluded:
+    - id
+    - i
+    - x
+    - y
+    - r
+    - g
+    - b
+    - a
+
+type_name:
+  min_length: 3
+  max_length: 60
+
+reporter: "xcode"
