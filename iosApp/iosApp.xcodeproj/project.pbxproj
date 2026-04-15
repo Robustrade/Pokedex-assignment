@@ -12,12 +12,16 @@
 		A0003 /* StateFlowExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0003 /* StateFlowExtensions.swift */; };
 		A0004 /* PokemonColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0004 /* PokemonColors.swift */; };
 		A0005 /* PokemonListStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0005 /* PokemonListStore.swift */; };
+		A0006 /* PokemonDetailStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0006 /* PokemonDetailStore.swift */; };
+		A0007 /* FavoritesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0007 /* FavoritesStore.swift */; };
 		A0008 /* KoinHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0008 /* KoinHelper.swift */; };
 		A0009 /* PokemonListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0009 /* PokemonListView.swift */; };
 		A0010 /* PokemonGridCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0010 /* PokemonGridCell.swift */; };
+		A0011 /* PokemonDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0011 /* PokemonDetailView.swift */; };
 		A0012 /* TypeChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0012 /* TypeChip.swift */; };
 		A0013 /* StatBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0013 /* StatBar.swift */; };
 		A0014 /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0014 /* FlowLayout.swift */; };
+		A0015 /* FavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0015 /* FavoritesView.swift */; };
 		A0016 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B0016 /* Assets.xcassets */; };
 		DA52813C6ABE90128F960957 /* Pods_iosApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9418996CBB2D1204986CB8DA /* Pods_iosApp.framework */; };
 /* End PBXBuildFile section */
@@ -30,12 +34,16 @@
 		B0003 /* StateFlowExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateFlowExtensions.swift; sourceTree = "<group>"; };
 		B0004 /* PokemonColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonColors.swift; sourceTree = "<group>"; };
 		B0005 /* PokemonListStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonListStore.swift; sourceTree = "<group>"; };
+		B0006 /* PokemonDetailStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonDetailStore.swift; sourceTree = "<group>"; };
+		B0007 /* FavoritesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesStore.swift; sourceTree = "<group>"; };
 		B0008 /* KoinHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KoinHelper.swift; sourceTree = "<group>"; };
 		B0009 /* PokemonListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonListView.swift; sourceTree = "<group>"; };
 		B0010 /* PokemonGridCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonGridCell.swift; sourceTree = "<group>"; };
+		B0011 /* PokemonDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonDetailView.swift; sourceTree = "<group>"; };
 		B0012 /* TypeChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeChip.swift; sourceTree = "<group>"; };
 		B0013 /* StatBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatBar.swift; sourceTree = "<group>"; };
 		B0014 /* FlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowLayout.swift; sourceTree = "<group>"; };
+		B0015 /* FavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
 		B0016 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B0017 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B0018 /* iosApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -60,6 +68,7 @@
 				ED1F59DAF3DF34B51A7357C1 /* Pods-iosApp.debug.xcconfig */,
 				A8468446D3CB31BFD2296622 /* Pods-iosApp.release.xcconfig */,
 			);
+			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -124,6 +133,8 @@
 			isa = PBXGroup;
 			children = (
 				B0005 /* PokemonListStore.swift */,
+				B0006 /* PokemonDetailStore.swift */,
+				B0007 /* FavoritesStore.swift */,
 				B0008 /* KoinHelper.swift */,
 			);
 			path = Stores;
@@ -133,6 +144,8 @@
 			isa = PBXGroup;
 			children = (
 				G0008 /* PokemonList */,
+				G0009 /* PokemonDetail */,
+				G0010 /* Favorites */,
 				G0011 /* Components */,
 			);
 			path = Views;
@@ -145,6 +158,22 @@
 				B0010 /* PokemonGridCell.swift */,
 			);
 			path = PokemonList;
+			sourceTree = "<group>";
+		};
+		G0009 /* PokemonDetail */ = {
+			isa = PBXGroup;
+			children = (
+				B0011 /* PokemonDetailView.swift */,
+			);
+			path = PokemonDetail;
+			sourceTree = "<group>";
+		};
+		G0010 /* Favorites */ = {
+			isa = PBXGroup;
+			children = (
+				B0015 /* FavoritesView.swift */,
+			);
+			path = Favorites;
 			sourceTree = "<group>";
 		};
 		G0011 /* Components */ = {
@@ -265,12 +294,16 @@
 				A0003 /* StateFlowExtensions.swift in Sources */,
 				A0004 /* PokemonColors.swift in Sources */,
 				A0005 /* PokemonListStore.swift in Sources */,
+				A0006 /* PokemonDetailStore.swift in Sources */,
+				A0007 /* FavoritesStore.swift in Sources */,
 				A0008 /* KoinHelper.swift in Sources */,
 				A0009 /* PokemonListView.swift in Sources */,
 				A0010 /* PokemonGridCell.swift in Sources */,
+				A0011 /* PokemonDetailView.swift in Sources */,
 				A0012 /* TypeChip.swift in Sources */,
 				A0013 /* StatBar.swift in Sources */,
 				A0014 /* FlowLayout.swift in Sources */,
+				A0015 /* FavoritesView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

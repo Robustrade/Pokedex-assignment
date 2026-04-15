@@ -11,7 +11,12 @@ struct ContentView: View {
                     Label("Pokédex", systemImage: "list.bullet.rectangle")
                 }
                 .tag(Tab.list)
-       
+            
+            FavoritesView()
+                .tabItem {
+                    Label("Favorites", systemImage: "heart.fill")
+                }
+                .tag(Tab.favorites)
         }
         .tint(PokemonColors.primary)
     }
